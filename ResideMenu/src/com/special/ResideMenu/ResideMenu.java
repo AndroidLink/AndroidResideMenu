@@ -43,8 +43,6 @@ public class ResideMenu extends FrameLayout{
     private ScrollView scrollViewMenu;
     /** the activity that view attach to */
     private Activity activity;
-    /** the decorview of the activity    */
-    private ViewGroup viewDecor;
     /** the viewgroup of the activity    */
     private TouchDisableView viewActivity;
     /** the flag of menu open status     */
@@ -81,32 +79,74 @@ public class ResideMenu extends FrameLayout{
         layoutLeftMenu = (LinearLayout) findViewById(R.id.layout_left_menu);
         layoutRightMenu = (LinearLayout) findViewById(R.id.layout_right_menu);
         imageViewBackground = (ImageView) findViewById(R.id.iv_background);
+
+        leftMenuItems   = new ArrayList<ResideMenuItem>();
+        rightMenuItems  = new ArrayList<ResideMenuItem>();
     }
 
     /**
-     * use the method to set up the activity which residemenu need to show;
+     * use the method to set up the activity which residemenu need to show; the
+     * activity content view is popup from decorator view and inject within this menu.
      *
      * @param activity
      */
     public void attachToActivity(Activity activity){
-        initValue(activity);
+        this.activity   = activity;
+        ignoredViews    = new ArrayList<View>();
+
+        ViewGroup parent = (ViewGroup) activity.getWindow().getDecorView();
+        View content = parent.getChildAt(0);
+
+        // wrap only content view of activity.
+        int index = 0;
+        if (content instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup)content;
+            if (group.getChildCount() > 2) {
+                content = group.getChildAt(2);
+                parent = group;
+                index = 2;
+
+                if (content instanceof ViewGroup) {
+                    group = (ViewGroup)content;
+                    if (group.getChildCount() > 1) {
+                        content = group.getChildAt(1);
+                        parent = group;
+                        index = 1;
+                    }
+                }
+            }
+        }
+
+        parent.removeViewAt(index);
+        parent.addView(this, index);
+
+        viewActivity = new TouchDisableView(this.activity);
+        viewActivity.setContent(content);
+        addView(viewActivity);
+
         setShadowAdjustScaleXByOrientation();
-        viewDecor.addView(this, 0);
         setViewPadding();
     }
 
-    private void initValue(Activity activity){
+    /**
+     * use the method to set up the activity which residemenu need to show; the
+     * activity's content view inflated from layoutId is inject within this menu.
+     *
+     * @param activity
+     */
+    public void attachToActivity(Activity activity, int layoutId){
         this.activity   = activity;
-        leftMenuItems   = new ArrayList<ResideMenuItem>();
-        rightMenuItems  = new ArrayList<ResideMenuItem>();
         ignoredViews    = new ArrayList<View>();
-        viewDecor = (ViewGroup) activity.getWindow().getDecorView();
+
         viewActivity = new TouchDisableView(this.activity);
 
-        View mContent   = viewDecor.getChildAt(0);
-        viewDecor.removeViewAt(0);
+        View mContent   = activity.getLayoutInflater().inflate(layoutId, null);
         viewActivity.setContent(mContent);
         addView(viewActivity);
+
+        setShadowAdjustScaleXByOrientation();
+        activity.setContentView(this);
+        setViewPadding();
     }
 
     private void setShadowAdjustScaleXByOrientation(){
@@ -486,6 +526,8 @@ public class ResideMenu extends FrameLayout{
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        preHandleEvent(ev);
+
         float currentActivityScaleX = ViewHelper.getScaleX(viewActivity);
         if (currentActivityScaleX == 1.0f)
             setScaleDirectionByRawX(ev.getRawX());
@@ -588,4 +630,16 @@ public class ResideMenu extends FrameLayout{
         public void closeMenu();
     }
 
+    // check the location, and adjust the motion event if necessary.
+    private int[] mLocation;
+    private void preHandleEvent(MotionEvent ev) {
+        if (null == mLocation) {
+            mLocation = new int[2];
+            getLocationInWindow(mLocation);
+        }
+
+        if (0 != mLocation[0] || 0 != mLocation[1]) {
+            ev.setLocation(ev.getX() - mLocation[0], ev.getY() - mLocation[1]);
+        }
+    }
 }
