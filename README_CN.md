@@ -104,6 +104,14 @@ resideMenu.closeMenu();
 ```
 这样子在ignored_view操作的区域就不允许用手势滑动操作菜单.
 
+##新增改动
+1. 保持标题栏不动，只缩放内容区.
+2. 
+
+##Known issue
+1. 在API11以前的系统，点击菜单项切换功能失效，可以考虑使用View定义的私有协议或者使用触屏事件代理机制解决。
+2. 
+
 ##About me
 A student from SCAU China.<br>
 Email: specialcyci#gmail.com
