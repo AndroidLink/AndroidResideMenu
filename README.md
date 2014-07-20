@@ -106,6 +106,13 @@ On some occasions, the slipping gesture function for locking/unlocking menu, may
 ```
 So that in ignored view’s workplace, the slipping gesture will not be allowed to operate menu.
 
+##Improvement
+1. Keep the title bar or action bar and reside the content area only.
+2. 
+
+##Known issue
+1. with API level 11-, it doesn't work to switch activity fragment while try to click on memnu item. (Maybe using private command protocal of View class is a solution. TO BE ESTIMATING later)
+
 ##About me
 A student from SCAU China.<br>
 Email: specialcyci#gmail.com
