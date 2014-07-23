@@ -18,6 +18,7 @@ import com.nineoldandroids.view.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * User: special
@@ -166,10 +167,9 @@ public class ResideMenu extends FrameLayout{
      * @param imageResrouce
      */
     public void setBackground(int imageResrouce) {
-        if (imageViewBackground instanceof ImageView) {
-            ((ImageView) imageViewBackground).setImageResource(imageResrouce);
-        } else if (imageViewBackground instanceof ViewGroup) {
-        } else {
+        Stack<View> pendingStack = new Stack<View>();
+        pendingStack.push(imageViewBackground);
+        if (!travelSetBackground(pendingStack, imageResrouce)) {
             imageViewBackground.setBackgroundResource(imageResrouce);
         }
     }
@@ -655,4 +655,30 @@ public class ResideMenu extends FrameLayout{
             imageViewBackground = imageView;
         }
     }
+
+    private static boolean travelSetBackground(Stack<View> pendingStack, int imageResrouce) {
+        boolean result = false;
+        while(true) {
+            if  (pendingStack.isEmpty()) {
+                break;
+            }
+
+            View view = pendingStack.pop();
+            if (null != view) {
+                if (view instanceof ImageView) {
+                    ((ImageView)view).setImageResource(imageResrouce);
+                    result = true;
+                } else if (view instanceof ViewGroup) {
+                    ViewGroup vg = (ViewGroup)view;
+                    int count = vg.getChildCount();
+                    for (int i = 0; i < count; i++) {
+                        pendingStack.push(vg.getChildAt(i));
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
 }
