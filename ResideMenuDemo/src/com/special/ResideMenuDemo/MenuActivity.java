@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.special.ResideMenu.ResideMenu;
 import com.special.ResideMenu.ResideMenuItem;
@@ -32,10 +34,12 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void setUpMenu() {
-
         // attach to current activity;
         resideMenu = new ResideMenu(this);
-        resideMenu.setBackground(R.drawable.menu_background);
+//        resideMenu.setBackground(R.drawable.menu_background);
+        ImageView bg = (ImageView) LayoutInflater.from(this).inflate(R.layout.single_image, null);
+        resideMenu.setBackGroundView(bg);
+
         resideMenu.attachToActivity(this);
         resideMenu.setMenuListener(menuListener);
         //valid scale factor is between 0.0f and 1.0f. leftmenu'width is 150dip. 

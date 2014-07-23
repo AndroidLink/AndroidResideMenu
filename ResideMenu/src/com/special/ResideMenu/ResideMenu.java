@@ -642,4 +642,12 @@ public class ResideMenu extends FrameLayout{
             ev.setLocation(ev.getX() - mLocation[0], ev.getY() - mLocation[1]);
         }
     }
+
+    public void setBackGroundView(ImageView imageView) {
+        if (null != imageViewBackground && null != imageView) {
+            removeView(imageViewBackground);
+            addView(imageView, 0);
+            imageViewBackground = imageView;
+        }
+    }
 }
