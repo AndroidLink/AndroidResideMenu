@@ -136,15 +136,15 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected  void onPause() {
         super.onPause();
-        if (null != mReceiver) {
-            SettingsFragment.stopListen(this, mReceiver);
+        if (null != mSettingReceiver) {
+            SettingsFragment.stopListen(this, mSettingReceiver);
         }
     }
 
-    private BroadcastReceiver mReceiver;
+    private BroadcastReceiver mSettingReceiver;
     private BroadcastReceiver getReceiver() {
-        if (null == mReceiver) {
-            mReceiver = new BroadcastReceiver() {
+        if (null == mSettingReceiver) {
+            mSettingReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
@@ -157,6 +157,6 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
                 }
             };
         }
-        return mReceiver;
+        return mSettingReceiver;
     }
 }
