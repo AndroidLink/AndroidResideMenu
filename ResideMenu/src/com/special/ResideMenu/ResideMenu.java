@@ -35,7 +35,7 @@ public class ResideMenu extends FrameLayout{
     private static final int PRESSED_MOVE_VERTICAL = 5;
 
     private ImageView imageViewShadow;
-    private ImageView imageViewBackground;
+    private View imageViewBackground;
     private LinearLayout layoutLeftMenu;
     private LinearLayout layoutRightMenu;
     private ScrollView scrollViewLeftMenu;
@@ -78,7 +78,7 @@ public class ResideMenu extends FrameLayout{
         imageViewShadow = (ImageView) findViewById(R.id.iv_shadow);
         layoutLeftMenu = (LinearLayout) findViewById(R.id.layout_left_menu);
         layoutRightMenu = (LinearLayout) findViewById(R.id.layout_right_menu);
-        imageViewBackground = (ImageView) findViewById(R.id.iv_background);
+        imageViewBackground = findViewById(R.id.iv_background);
 
         leftMenuItems   = new ArrayList<ResideMenuItem>();
         rightMenuItems  = new ArrayList<ResideMenuItem>();
@@ -165,8 +165,13 @@ public class ResideMenu extends FrameLayout{
      *
      * @param imageResrouce
      */
-    public void setBackground(int imageResrouce){
-        imageViewBackground.setImageResource(imageResrouce);
+    public void setBackground(int imageResrouce) {
+        if (imageViewBackground instanceof ImageView) {
+            ((ImageView) imageViewBackground).setImageResource(imageResrouce);
+        } else if (imageViewBackground instanceof ViewGroup) {
+        } else {
+            imageViewBackground.setBackgroundResource(imageResrouce);
+        }
     }
 
     /**
@@ -643,7 +648,7 @@ public class ResideMenu extends FrameLayout{
         }
     }
 
-    public void setBackGroundView(ImageView imageView) {
+    public void setBackGroundView(View imageView) {
         if (null != imageViewBackground && null != imageView) {
             removeView(imageViewBackground);
             addView(imageView, 0);

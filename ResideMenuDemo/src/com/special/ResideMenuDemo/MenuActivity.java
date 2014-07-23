@@ -1,5 +1,8 @@
 package com.special.ResideMenuDemo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -123,5 +126,37 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     // What good method is to access resideMenu？
     public ResideMenu getResideMenu(){
         return resideMenu;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SettingsFragment.startListen(this, getReceiver());
+    }
+    @Override
+    protected  void onPause() {
+        super.onPause();
+        if (null != mReceiver) {
+            SettingsFragment.stopListen(this, mReceiver);
+        }
+    }
+
+    private BroadcastReceiver mReceiver;
+    private BroadcastReceiver getReceiver() {
+        if (null == mReceiver) {
+            mReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                    View bg = SettingsFragment.getTargetView(inflater, intent);
+                    if (null == bg) {
+                        resideMenu.setBackground(R.drawable.menu_background);
+                    } else {
+                        resideMenu.setBackGroundView(bg);
+                    }
+                }
+            };
+        }
+        return mReceiver;
     }
 }

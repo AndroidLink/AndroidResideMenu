@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ResideMenuDemo</string>
+
+    <string-array name="main_options">
+        <item>Single image</item>
+        <item>Multiple images</item>
+        <item>From url</item>
+        <item>None</item>
+    </string-array>
 </resources>
