@@ -13,6 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ViewSwitcher;
+
+import com.flaviofaria.kenburnsview.KenBurnsView;
+import com.flaviofaria.kenburnsview.Transition;
 
 /**
  * User: special
@@ -62,13 +66,47 @@ public class SettingsFragment extends Fragment {
                 break;
             case POS_MULTI_IMG:
                 view = inflater.inflate(R.layout.multi_image, null);
+                setupMultiImage(view);
                 break;
             case POS_FROM_URL:
                 view = inflater.inflate(R.layout.from_url, null);
+                if (null != view && view instanceof ImageView) {
+                    VolleyImageUtils.bindUrlToImageView("http://i.imgur.com/gysR4Ee.jpg", (ImageView)view,
+                            R.drawable.menu_background, 0);
+                }
                 break;
         }
 
         return view;
+    }
+
+    private static void setupMultiImage(View view) {
+        if (null != view) {
+            final ViewSwitcher switcher = (ViewSwitcher) view.findViewById(R.id.viewSwitcher);
+            if (null != switcher) {
+                KenBurnsView.TransitionListener listener = new KenBurnsView.TransitionListener() {
+                    private static final int TRANSITIONS_TO_SWITCH = 2;
+                    private int mTransitionsCount = 0;
+                    @Override
+                    public void onTransitionStart(Transition transition) {
+                    }
+
+                    @Override
+                    public void onTransitionEnd(Transition transition) {
+                        mTransitionsCount++;
+                        if (mTransitionsCount == TRANSITIONS_TO_SWITCH) {
+                            switcher.showNext();
+                            mTransitionsCount = 0;
+                        }
+                    }
+                };
+                KenBurnsView img1 = (KenBurnsView) view.findViewById(R.id.img1);
+                img1.setTransitionListener(listener);
+
+                KenBurnsView img2 = (KenBurnsView) view.findViewById(R.id.img2);
+                img2.setTransitionListener(listener);
+            }
+        }
     }
 
 
