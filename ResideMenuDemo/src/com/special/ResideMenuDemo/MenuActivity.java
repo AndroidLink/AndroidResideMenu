@@ -33,7 +33,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         setContentView(R.layout.main);
         mContext = this;
         setUpMenu();
-        changeFragment(new HomeFragment());
+        changeToHomeFragment();
     }
 
     private void setUpMenu() {
@@ -90,7 +90,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View view) {
 
         if (view == itemHome){
-            changeFragment(new HomeFragment());
+            changeToHomeFragment();
         }else if (view == itemProfile){
             changeFragment(new ProfileFragment());
         }else if (view == itemCalendar){
@@ -124,14 +124,37 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     }
 
     // What good method is to access resideMenu？
-    public ResideMenu getResideMenu(){
-        return resideMenu;
+//    public ResideMenu getResideMenu(){
+//        return resideMenu;
+//    }
+    // listener pattern alternative begin
+    private HomeFragment.OnViewCommonListener mViewCommonListener;
+    private void changeToHomeFragment() {
+        HomeFragment fragment = new HomeFragment();
+        if (null == mViewCommonListener) {
+            mViewCommonListener = new HomeFragment.OnViewCommonListener() {
+                @Override
+                public void onViewIgnored(View view) {
+                    resideMenu.addIgnoredView(view);
+                }
+
+                @Override
+                public void onViewToggle() {
+                    resideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
+                }
+            };
+        }
+        fragment.setViewCommonListener(mViewCommonListener);
+
+        changeFragment(fragment);
     }
+
+    // listener pattern alternative end
 
     @Override
     protected void onResume() {
         super.onResume();
-        SettingsFragment.startListen(this, getReceiver());
+        SettingsFragment.startListen(this, getSettingReceiver());
     }
     @Override
     protected  void onPause() {
@@ -142,7 +165,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private BroadcastReceiver mSettingReceiver;
-    private BroadcastReceiver getReceiver() {
+    private BroadcastReceiver getSettingReceiver() {
         if (null == mSettingReceiver) {
             mSettingReceiver = new BroadcastReceiver() {
                 @Override

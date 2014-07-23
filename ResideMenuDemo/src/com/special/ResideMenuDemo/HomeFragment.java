@@ -17,7 +17,7 @@ import com.special.ResideMenu.ResideMenu;
 public class HomeFragment extends Fragment {
 
     private View parentView;
-    private ResideMenu resideMenu;
+//    private ResideMenu resideMenu;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,19 +27,40 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpViews() {
-        MenuActivity parentActivity = (MenuActivity) getActivity();
-        resideMenu = parentActivity.getResideMenu();
+//        MenuActivity parentActivity = (MenuActivity) getActivity();
+//        resideMenu = parentActivity.getResideMenu();
 
         parentView.findViewById(R.id.btn_open_menu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                resideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
+//                resideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
+                if (null != mToggleListener) {
+                    mToggleListener.onViewToggle();
+                }
             }
         });
 
         // add gesture operation's ignored views
         FrameLayout ignored_view = (FrameLayout) parentView.findViewById(R.id.ignored_view);
-        resideMenu.addIgnoredView(ignored_view);
+//        resideMenu.addIgnoredView(ignored_view);
+        if (null != mIgnoreListener) {
+            mIgnoreListener.onViewIgnored(ignored_view);
+        }
     }
 
+    public static interface OnViewIgnoredListener {
+        public void onViewIgnored(View view);
+    }
+    public static interface OnViewToggleListener {
+        public void onViewToggle();
+    }
+    public static interface OnViewCommonListener extends OnViewIgnoredListener, OnViewToggleListener {
+    }
+
+    private OnViewIgnoredListener mIgnoreListener;
+    private OnViewToggleListener mToggleListener;
+    public void setViewCommonListener(OnViewCommonListener listener) {
+        mIgnoreListener = listener;
+        mToggleListener = listener;
+    }
 }
